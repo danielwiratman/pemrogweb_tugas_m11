@@ -1,0 +1,132 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <link rel="stylesheet" href="{% static 'base/style.css' %}" />
+    </head>
+    <body>
+        <h1 class="mainTitle">Tugas 11</h1>
+        <h2 class="mainTitle">Daniel Wiratman - 202000205</h2>
+        <div class="container">
+            <div class="box">
+                <h1>SISTEM 1: HVAC Control</h1>
+                <h2>SUBSISTEM 1: Sensor Temperatur</h2>
+                <p><span id="system1_temperature"></span>&deg;C</p>
+                <h2>SUBSISTEM 1: Sensor Kelembapan</h2>
+                <p><span id="system1_humidity"></span>%</p>
+                <h2>SUBSISTEM 1: Sensor Okupansi</h2>
+                <p><span id="system1_occupancy"></span> orang</p>
+                <h2>AKTUATOR: Sensor Okupansi</h2>
+                <p><span id="system1_hvac"></span></p>
+            </div>
+            <div class="box">
+                <h1>SISTEM 2: Chemical Dosing</h1>
+                <h2>SUBSISTEM 1: Sensor pH</h2>
+                <p><span id="system2_ph"></span></p>
+                <h2>SUBSISTEM 2: Sensor Turbiditas</h2>
+                <p><span id="system2_turbiditas"></span> NTU</p>
+                <h2>SUBSISTEM 3: Sensor Konduktivitas</h2>
+                <p><span id="system2_konduktivitas"></span> &micro;S/cm</p>
+                <h2>AKTUATOR: Chemical Pump</h2>
+                <p><span id="system2_chemical_pump"></span></p>
+            </div>
+            <div class="box">
+                <h1>SISTEM 3: Water Control</h1>
+                <h2>SUBSISTEM 1: Sensor Level Air</h2>
+                <p><span id="system3_waterlevel"></span> mm</p>
+                <h2>SUBSISTEM 2: Sensor Tekanan</h2>
+                <p><span id="system3_pressure"></span> Pa</p>
+                <h2>SUBSISTEM 3: Sensor Suhu</h2>
+                <p><span id="system3_temperature"></span>&deg;C</p>
+                <h2>AKTUATOR: Water Valve</h2>
+                <p><span id="system3_water_valve"></span></p>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+        <script>
+            function updateView(message) {
+                const system1_temperature = JSON.parse(
+                    message["system1_temperature"]
+                );
+                document.querySelector("#system1_temperature").innerHTML =
+                    system1_temperature[0].fields.value;
+                const system1_humidity = JSON.parse(
+                    message["system1_humidity"]
+                );
+                document.querySelector("#system1_humidity").innerHTML =
+                    system1_humidity[0].fields.value;
+                const system1_occupancy = JSON.parse(
+                    message["system1_occupancy"]
+                );
+                document.querySelector("#system1_occupancy").innerHTML =
+                    system1_occupancy[0].fields.value;
+                const system2_ph = JSON.parse(message["system2_ph"]);
+                document.querySelector("#system2_ph").innerHTML =
+                    system2_ph[0].fields.value;
+                const system2_turbiditas = JSON.parse(
+                    message["system2_turbiditas"]
+                );
+                document.querySelector("#system2_turbiditas").innerHTML =
+                    system2_turbiditas[0].fields.value;
+                const system2_konduktivitas = JSON.parse(
+                    message["system2_konduktivitas"]
+                );
+                document.querySelector("#system2_konduktivitas").innerHTML =
+                    system2_konduktivitas[0].fields.value;
+                const system3_waterlevel = JSON.parse(
+                    message["system3_waterlevel"]
+                );
+                document.querySelector("#system3_waterlevel").innerHTML =
+                    system3_waterlevel[0].fields.value;
+                const system3_pressure = JSON.parse(
+                    message["system3_pressure"]
+                );
+                document.querySelector("#system3_pressure").innerHTML =
+                    system3_pressure[0].fields.value;
+                const system3_temperature = JSON.parse(
+                    message["system3_temperature"]
+                );
+                document.querySelector("#system3_temperature").innerHTML =
+                    system3_temperature[0].fields.value;
+                const system1_hvac = message["system1_hvac"] ? "ON" : "OFF";
+                const system2_chemical_pump = message["system2_chemical_pump"]
+                    ? "ON"
+                    : "OFF";
+                const system3_water_valve = message["system3_water_valve"]
+                    ? "ON"
+                    : "OFF";
+
+                document.querySelector("#system1_hvac").innerHTML =
+                    system1_hvac;
+                document.querySelector("#system2_chemical_pump").innerHTML =
+                    system2_chemical_pump;
+                document.querySelector("#system3_water_valve").innerHTML =
+                    system3_water_valve;
+            }
+
+            function getData() {
+                fetch(`http://${window.location.host}/api/sensor/`)
+                    .then((res) => res.json())
+                    .then((data) => updateView(data));
+            }
+
+            setInterval(function () {
+                const e = getData();
+            }, 1000);
+
+            Number.prototype.pad = function (size) {
+                var s = String(this);
+                while (s.length < (size || 2)) {
+                    s = "0" + s;
+                }
+                return s;
+            };
+        </script>
+    </body>
+</html>
